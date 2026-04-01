@@ -5,8 +5,8 @@ import androidx.room.*
 @Entity(tableName = "lyrics_cache")
 data class LyricsCacheEntity(
     @PrimaryKey val key: String,
-    @ColumnInfo(name = "synced_lyrics") val syncedLyrics: String?,
-    @ColumnInfo(name = "plain_lyrics") val plainLyrics: String?
+    @ColumnInfo(name = "synced_lyrics") val syncedLyrics: String = "",
+    @ColumnInfo(name = "plain_lyrics") val plainLyrics: String = ""
 )
 
 @Dao
@@ -21,7 +21,7 @@ interface LyricsCacheDao {
     suspend fun clearAll()
 }
 
-@Database(entities = [LyricsCacheEntity::class], version = 1)
+@Database(entities = [LyricsCacheEntity::class], version = 1, exportSchema = false)
 abstract class VibeDatabase : RoomDatabase() {
     abstract fun lyricsCacheDao(): LyricsCacheDao
 }
