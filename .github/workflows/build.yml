@@ -23,11 +23,17 @@ jobs:
         with:
           gradle-version: "8.9"
 
-      - name: Fix gradlew permissions
-        run: chmod +x gradlew
+      - name: Show all files in repo
+        run: find . -name "*.kts" -o -name "*.kt" -o -name "*.xml" -o -name "*.yml" | grep -v ".gradle" | grep -v "build/"
 
-      - name: Show project structure (debug)
-        run: gradle projects
+      - name: Show app/build.gradle.kts content
+        run: cat app/build.gradle.kts || echo "FILE NOT FOUND"
+
+      - name: Show settings.gradle.kts content
+        run: cat settings.gradle.kts || echo "FILE NOT FOUND"
+
+      - name: List Gradle tasks in app
+        run: gradle :app:tasks --all || echo "Cannot list tasks"
 
       - name: Build Debug APK
         run: gradle :app:assembleDebug --no-daemon --stacktrace
