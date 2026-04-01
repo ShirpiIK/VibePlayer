@@ -6,28 +6,28 @@ import retrofit2.http.Query
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// ─── LrcLib API Models ────────────────────────────────────────────────────────
+// ─── Models ───────────────────────────────────────────────────────────────────
 
 data class LrcLibResponse(
-    @SerializedName("id") val id: Int,
-    @SerializedName("trackName") val trackName: String,
-    @SerializedName("artistName") val artistName: String,
-    @SerializedName("albumName") val albumName: String?,
-    @SerializedName("duration") val duration: Double?,
-    @SerializedName("syncedLyrics") val syncedLyrics: String?,   // LRC format
-    @SerializedName("plainLyrics") val plainLyrics: String?       // Plain text fallback
+    @SerializedName("id") val id: Int = 0,
+    @SerializedName("trackName") val trackName: String = "",
+    @SerializedName("artistName") val artistName: String = "",
+    @SerializedName("albumName") val albumName: String = "",
+    @SerializedName("duration") val duration: Double = 0.0,
+    @SerializedName("syncedLyrics") val syncedLyrics: String = "",
+    @SerializedName("plainLyrics") val plainLyrics: String = ""
 )
 
-// ─── Retrofit API Interface ───────────────────────────────────────────────────
+// ─── API — NO nullable return types (KSP requirement) ─────────────────────────
 
 interface LrcLibApi {
     @GET("api/get")
     suspend fun getLyrics(
         @Query("track_name") trackName: String,
         @Query("artist_name") artistName: String,
-        @Query("album_name") albumName: String? = null,
-        @Query("duration") duration: Int? = null
-    ): LrcLibResponse?
+        @Query("album_name") albumName: String = "",
+        @Query("duration") duration: Int = 0
+    ): LrcLibResponse
 
     @GET("api/search")
     suspend fun searchLyrics(
@@ -52,71 +52,55 @@ class LyricsRepository @Inject constructor(
     private val parser: LrcParser,
     private val dao: LyricsCacheDao
 ) {
-
-    /**
-     * Fetch lyrics for a song. Checks local cache first, then LrcLib API.
-     */
     suspend fun getLyrics(
         trackName: String,
         artistName: String,
-        albumName: String? = null,
-        durationSec: Int? = null
+        albumName: String = "",
+        durationSec: Int = 0
     ): LyricsState {
         val cacheKey = "${artistName}_${trackName}".lowercase().replace(" ", "_")
 
         // 1. Check Room cache
         val cached = dao.getLyrics(cacheKey)
         if (cached != null) {
-            return if (cached.syncedLyrics != null)
-                LyricsState.Synced(parser.parse(cached.syncedLyrics))
-            else if (cached.plainLyrics != null)
-                LyricsState.Plain(cached.plainLyrics)
-            else
-                LyricsState.NotFound
+            return when {
+                cached.syncedLyrics.isNotBlank() ->
+                    LyricsState.Synced(parser.parse(cached.syncedLyrics))
+                cached.plainLyrics.isNotBlank() ->
+                    LyricsState.Plain(cached.plainLyrics)
+                else -> LyricsState.NotFound
+            }
         }
 
         // 2. Fetch from LrcLib
         return try {
-            val response = api.getLyrics(
-                trackName = trackName,
-                artistName = artistName,
-                albumName = albumName,
-                duration = durationSec
-            )
-
-            if (response == null) {
-                // Try search fallback
-                val results = api.searchLyrics("$artistName $trackName")
-                val best = results.firstOrNull()
-                handleResponse(best, cacheKey)
-            } else {
-                handleResponse(response, cacheKey)
-            }
+            val response = api.getLyrics(trackName, artistName, albumName, durationSec)
+            handleResponse(response, cacheKey)
         } catch (e: Exception) {
-            LyricsState.NotFound
+            // Try search fallback
+            try {
+                val results = api.searchLyrics("$artistName $trackName")
+                if (results.isNotEmpty()) handleResponse(results.first(), cacheKey)
+                else LyricsState.NotFound
+            } catch (e2: Exception) {
+                LyricsState.NotFound
+            }
         }
     }
 
     private suspend fun handleResponse(
-        response: LrcLibResponse?,
+        response: LrcLibResponse,
         cacheKey: String
     ): LyricsState {
-        if (response == null) {
-            dao.insert(LyricsCacheEntity(cacheKey, null, null))
-            return LyricsState.NotFound
-        }
-
-        // Save to cache
         dao.insert(LyricsCacheEntity(
             key = cacheKey,
             syncedLyrics = response.syncedLyrics,
             plainLyrics = response.plainLyrics
         ))
-
         return when {
-            response.syncedLyrics != null ->
+            response.syncedLyrics.isNotBlank() ->
                 LyricsState.Synced(parser.parse(response.syncedLyrics))
-            response.plainLyrics != null ->
+            response.plainLyrics.isNotBlank() ->
                 LyricsState.Plain(response.plainLyrics)
             else -> LyricsState.NotFound
         }
