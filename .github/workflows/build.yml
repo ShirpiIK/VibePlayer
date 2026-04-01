@@ -26,8 +26,11 @@ jobs:
       - name: Fix gradlew permissions
         run: chmod +x gradlew
 
+      - name: Show project structure (debug)
+        run: gradle projects
+
       - name: Build Debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         if: success()
