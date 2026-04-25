@@ -19,10 +19,10 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.9"
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
 
-      - name: Show all files in repo
+      - name: with all files in repo
         run: find . -name "*.kts" -o -name "*.kt" -o -name "*.xml" -o -name "*.yml" | grep -v ".gradle" | grep -v "build/"
 
       - name: Show app/build.gradle.kts content
@@ -32,10 +32,10 @@ jobs:
         run: cat settings.gradle.kts || echo "FILE NOT FOUND"
 
       - name: List Gradle tasks in app
-        run: gradle :app:tasks --all || echo "Cannot list tasks"
+        run: ./gradlew :app:tasks --all || echo "Cannot list tasks"
 
       - name: Build Debug APK
-        run: gradle :app:assembleDebug --no-daemon --stacktrace
+        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         if: success()

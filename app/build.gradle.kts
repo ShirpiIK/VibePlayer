@@ -1,9 +1,9 @@
 plugins {
-    id("com.android.application") version "8.7.3"
-    id("org.jetbrains.kotlin.android") version "2.1.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
-    id("com.google.dagger.hilt.android") version "2.53"
-    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    id("com.android.application") 
+    id("org.jetbrains.kotlin.android") 
+    id("org.jetbrains.kotlin.plugin.compose") 
+    id("com.google.dagger.hilt.android")  
+    id("com.google.devtools.ksp")
 }
 
 android {
