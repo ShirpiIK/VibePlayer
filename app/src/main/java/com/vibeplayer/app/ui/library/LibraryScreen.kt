@@ -1,6 +1,14 @@
 package com.vibeplayer.app.ui.library
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.vibeplayer.app.library.Song
@@ -276,7 +286,7 @@ fun MiniPlayer(
 
 @Composable
 fun PlayingIndicator(isPlaying: Boolean) {
-    val infiniteTransition = rememberInfiniteTransition(label = "bars")
+    val infiniteTransition = rememberInfiniteTransition()
     Row(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.Bottom,
@@ -292,13 +302,17 @@ fun PlayingIndicator(isPlaying: Boolean) {
                         easing = EaseInOutSine
                     ),
                     repeatMode = RepeatMode.Reverse
-                ),
-                label = "bar$i"
+                )
             )
+            val barHeight: Dp = if (isPlaying) {
+                height.dp
+            } else {
+                4.dp
+            }
             Box(
                 modifier = Modifier
                     .width(3.dp)
-                    .height(if (isPlaying) height.dp else 4.dp)
+                    .height(barHeight)
                     .background(Color.White, RoundedCornerShape(2.dp))
             )
         }
@@ -344,4 +358,4 @@ private fun Long.toTimeString(): String {
     return "%d:%02d".format(mins, secs)
 }
 
-private val EaseInOutSine = androidx.compose.animation.core.CubicBezierEasing(0.37f, 0f, 0.63f, 1f)
+private val EaseInOutSine = CubicBezierEasing(0.37f, 0f, 0.63f, 1f)

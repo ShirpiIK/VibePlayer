@@ -1,18 +1,43 @@
 package com.vibeplayer.app.ui.lyrics
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vibeplayer.app.lyrics.LyricLine
 import com.vibeplayer.app.lyrics.LyricsState
 import kotlinx.coroutines.launch
@@ -117,8 +142,7 @@ fun LyricLineItem(
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
-        ),
-        label = "fontSize"
+        )
     )
 
     val alpha by animateFloatAsState(
@@ -127,8 +151,7 @@ fun LyricLineItem(
             LyricLineState.PAST   -> 0.45f
             LyricLineState.FUTURE -> 0.30f
         },
-        animationSpec = tween(durationMillis = 300, easing = EaseInOutCubic),
-        label = "alpha"
+        animationSpec = tween(durationMillis = 300, easing = EaseInOutCubic)
     )
 
     val fontWeight = when (state) {
@@ -139,8 +162,7 @@ fun LyricLineItem(
     // Subtle left-indent on active line (Apple Music touch)
     val leftPadding by animateDpAsState(
         targetValue = if (state == LyricLineState.ACTIVE) 0.dp else 4.dp,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-        label = "indent"
+        animationSpec = spring(stiffness = Spring.StiffnessMedium)
     )
 
     if (text.isNotBlank()) {
@@ -205,15 +227,14 @@ fun PlainLyricsView(text: String) {
 
 @Composable
 fun LyricsLoadingView() {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.8f,
         animationSpec = infiniteRepeatable(
             animation = tween(800, easing = EaseInOutSine),
             repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulse"
+        )
     )
 
     Column(
