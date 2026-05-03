@@ -357,4 +357,4 @@ private fun Long.toTimeString(): String {
     return "%d:%02d".format(mins, secs)
 }
 
-private val EaseInOutSine = CubicBezierEasing(0.37f, 0f, 0.63f, 1f) 
+private val EaseInOutSine = CubicBezierEasing(0.37f, 0f, 0.63f, 1f)  

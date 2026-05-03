@@ -290,4 +290,4 @@ fun LyricsNotFoundView() {
 // ─── Easing helpers ───────────────────────────────────────────────────────────
 
 private val EaseInOutCubic = CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
-private val EaseInOutSine  = CubicBezierEasing(0.37f, 0f, 0.63f, 1f)
+private val EaseInOutSine  = CubicBezierEasing(0.37f, 0f, 0.63f, 1f) 
