@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -137,7 +138,7 @@ fun LibraryScreen(
     }
 }
 
-// ─── Song Row ─────────────────────────────────────────────────────────────────
+// ─── Song Row ───────────────────────────────────────────────────────────[...]
 
 @Composable
 fun SongRow(
@@ -214,7 +215,7 @@ fun SongRow(
     }
 }
 
-// ─── Mini player ─────────────────────────────────────────────────────────────
+// ─── Mini player ──────────────────────────────────────────────────────────[...]
 
 @Composable
 fun MiniPlayer(
@@ -318,7 +319,7 @@ fun PlayingIndicator(isPlaying: Boolean) {
     }
 }
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
+// ─── Empty state ──────────────────────────────────────────────────────────[...]
 
 @Composable
 fun EmptySongsView(modifier: Modifier = Modifier) {
@@ -357,4 +358,4 @@ private fun Long.toTimeString(): String {
     return "%d:%02d".format(mins, secs)
 }
 
-private val EaseInOutSine = CubicBezierEasing(0.37f, 0f, 0.63f, 1f)  
+private val EaseInOutSine = CubicBezierEasing(0.37f, 0f, 0.63f, 1f)
