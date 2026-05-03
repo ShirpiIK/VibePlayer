@@ -42,14 +42,14 @@ import com.vibeplayer.app.lyrics.LyricLine
 import com.vibeplayer.app.lyrics.LyricsState
 import kotlinx.coroutines.launch
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 //  Apple Music Style Lyrics Screen
 //  - Active line: Large, bold, full white
 //  - Past lines:  Slightly dimmed, smaller
 //  - Future lines: Dim white, smaller
 //  - Smooth auto-scroll to active line
 //  - Scale + alpha transitions per line
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun LyricsView(
@@ -232,7 +232,7 @@ fun LyricsLoadingView() {
         initialValue = 0.3f,
         targetValue = 0.8f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = EaseInOutSine),
+            animation = tween<Float>(800, easing = EaseInOutSine),
             repeatMode = RepeatMode.Reverse
         )
     )
@@ -243,7 +243,7 @@ fun LyricsLoadingView() {
         modifier = Modifier.padding(horizontal = 24.dp)
     ) {
         repeat(6) { i ->
-            val lineAlpha = alpha * (1f - i * 0.12f).coerceAtLeast(0.1f)
+            val lineAlpha = alpha * (1f - i.toFloat() * 0.12f).coerceAtLeast(0.1f)
             val width = listOf(0.9f, 0.75f, 0.85f, 0.65f, 0.8f, 0.5f)[i]
             Box(
                 modifier = Modifier
@@ -290,4 +290,4 @@ fun LyricsNotFoundView() {
 // ─── Easing helpers ───────────────────────────────────────────────────────────
 
 private val EaseInOutCubic = CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
-private val EaseInOutSine  = CubicBezierEasing(0.37f, 0f, 0.63f, 1f) 
+private val EaseInOutSine  = CubicBezierEasing(0.37f, 0f, 0.63f, 1f)
