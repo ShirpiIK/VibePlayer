@@ -1,7 +1,6 @@
 name: Build VibePlayer APK
 
 on:
-  
   workflow_dispatch:
 
 jobs:
@@ -18,18 +17,19 @@ jobs:
           distribution: 'temurin'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          api-level: 35
-          build-tools: 35.0.0
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: with all files in repo
-        run: find . -name "*.kts" -o -name "*.kt" -o -name "*.xml" -o -name "*.yml" | grep -v ".gradle" | grep -v "build/"
+      - name: List all source files in repo
+        run: find . \( -name "*.kts" -o -name "*.kt" -o -name "*.xml" -o -name "*.yml" \) | grep -v ".gradle" | grep -v "build/"
 
       - name: Show app/build.gradle.kts content
         run: cat app/build.gradle.kts || echo "FILE NOT FOUND"
