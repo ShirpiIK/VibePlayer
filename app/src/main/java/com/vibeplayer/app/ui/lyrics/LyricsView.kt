@@ -108,7 +108,7 @@ fun LyricsView(
 
                         Text(
                             text = line.text,
-                            color = if (isCurrent) accentColor else Color.White.copy(alpha = alpha),
+                            color = if (isCurrent) accentColor else Color.White,
                             fontSize = 24.sp,
                             fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
                             textAlign = TextAlign.Center,
@@ -117,7 +117,8 @@ fun LyricsView(
                                 .padding(horizontal = 16.dp)
                                 .graphicsLayer(
                                     scaleX = scale,
-                                    scaleY = scale
+                                    scaleY = scale,
+                                    alpha = alpha
                                 )
                         )
                     }
